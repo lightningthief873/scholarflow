@@ -290,7 +290,6 @@ module scholarflow::grant_system_test {
         initialize(test, ADMIN);
 
         // Set up student with grant funds
-        test_scenario::next_tx(test, STUDENT1);
         setup_student_with_funds(test);
 
         // Set up educational store
