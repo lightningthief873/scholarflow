@@ -49,7 +49,7 @@ module scholarflow::grant_system {
     }
 
     // Student fund wallet (holds approved grant money)
-    public struct StudentWallet has key {
+    public struct StudentWallet has key, store {
         id: UID,
         student_address: address,
         available_balance: u64,

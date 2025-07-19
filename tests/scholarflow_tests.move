@@ -215,6 +215,11 @@ module scholarflow::grant_system_test {
             test_scenario::ctx(test)
         );
 
+        test_scenario::return_shared(grant);
+        test_scenario::return_to_sender(test, student_profile);
+
+        transfer::public_transfer(test_scenario::take_from_sender<StudentWallet>(test), GRANT_OWNER);
+
         // Approve application
         test_scenario::next_tx(test, GRANT_OWNER);
         let mut grant_mut = test_scenario::take_shared<Grant>(test);
@@ -234,9 +239,9 @@ module scholarflow::grant_system_test {
         assert!(available == 1500, 0);
         assert!(total_received == 1500, 1);
 
+        transfer::public_transfer(student_wallet, STUDENT1);
+
         clock::destroy_for_testing(clock);
-        test_scenario::return_to_sender(test, student_profile);
-        test_scenario::return_to_sender(test, student_wallet);
         test_scenario::return_shared(grant_mut);
         test_scenario::return_shared(application);
         test_scenario::return_shared(registry);
@@ -285,7 +290,7 @@ module scholarflow::grant_system_test {
         initialize(test, ADMIN);
 
         // Set up student with grant funds
-        setup_student_with_funds(test, &mut scenario);
+        setup_student_with_funds(test);
 
         // Set up educational store
         test_scenario::next_tx(test, STORE_OWNER);
@@ -534,7 +539,7 @@ module scholarflow::grant_system_test {
     }
 
     // Helper function to set up a student with grant funds
-    fun setup_student_with_funds(test: &mut Scenario, scenario: &mut Scenario) {
+    fun setup_student_with_funds(test: &mut Scenario) {
         // Register and verify student
         test_scenario::next_tx(test, STUDENT1);
         let mut registry = test_scenario::take_shared<SystemRegistry>(test);
@@ -582,6 +587,12 @@ module scholarflow::grant_system_test {
             test_scenario::ctx(test)
         );
 
+        test_scenario::return_shared(grant);
+        test_scenario::return_to_sender(test, student_profile);
+
+
+        transfer::public_transfer(test_scenario::take_from_sender<StudentWallet>(test), GRANT_OWNER);
+
         // Approve grant
         test_scenario::next_tx(test, GRANT_OWNER);
         let mut grant_mut = test_scenario::take_shared<Grant>(test);
@@ -596,9 +607,9 @@ module scholarflow::grant_system_test {
             test_scenario::ctx(test)
         );
 
+        transfer::public_transfer(student_wallet, STUDENT1);
+
         clock::destroy_for_testing(clock);
-        test_scenario::return_to_sender(test, student_profile);
-        test_scenario::return_to_sender(test, student_wallet);
         test_scenario::return_shared(grant_mut);
         test_scenario::return_shared(application);
         test_scenario::return_shared(registry);
