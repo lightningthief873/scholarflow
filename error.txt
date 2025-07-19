@@ -1,0 +1,94 @@
+atharav@Atharav14:~/scholarflow$ iota move test
+INCLUDING DEPENDENCY Iota
+INCLUDING DEPENDENCY MoveStdlib
+BUILDING scholarflow
+warning[W09011]: unused constant
+    ┌─ ./sources/scholarflow.move:164:11
+    │
+164 │     const STUDENT_ALREADY_REGISTERED: vector<u8> = b"Student already registered";
+    │           ^^^^^^^^^^^^^^^^^^^^^^^^^^ The constant 'STUDENT_ALREADY_REGISTERED' is never used. Consider removing it.
+    │
+    = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 'fun', or 'struct')
+
+warning[W09011]: unused constant
+    ┌─ ./sources/scholarflow.move:166:11
+    │
+166 │     const STUDENT_NOT_REGISTERED: vector<u8> = b"Student not registered";
+    │           ^^^^^^^^^^^^^^^^^^^^^^ The constant 'STUDENT_NOT_REGISTERED' is never used. Consider removing it.
+    │
+    = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 'fun', or 'struct')
+
+warning[W09011]: unused constant
+    ┌─ ./sources/scholarflow.move:186:11
+    │
+186 │     const ALREADY_APPLIED: vector<u8> = b"Student already applied to this grant";
+    │           ^^^^^^^^^^^^^^^ The constant 'ALREADY_APPLIED' is never used. Consider removing it.
+    │
+    = This warning can be suppressed with '#[allow(unused_const)]' applied to the 'module' or module member ('const', 'fun', or 'struct')
+
+warning[W09002]: unused variable
+    ┌─ ./tests/scholarflow_tests.move:152:21
+    │
+152 │         let (title, description, total_funding, remaining_funding, target_demographic, is_active) = get_grant_info(&grant);
+    │                     ^^^^^^^^^^^ Unused local variable 'description'. Consider removing or prefixing with an underscore: '_description'
+    │
+    = This warning can be suppressed with '#[allow(unused_variable)]' applied to the 'module' or module member ('const', 'fun', or 'struct')
+
+error[E06001]: unused value without 'drop'
+    ┌─ ./tests/scholarflow_tests.move:243:37
+    │
+207 │         let grant = test_scenario::take_shared<Grant>(test);
+    │             -----                              ----- The type 'scholarflow::grant_system::Grant' does not have the ability 'drop'
+    │             │                                   
+    │             The local variable 'grant' still contains a value. The value does not have the 'drop' ability and must be consumed before the function returns
+    ·
+243 │         test_scenario::end(scenario);
+    │                                     ^ Invalid return
+    │
+    ┌─ ./sources/scholarflow.move:25:19
+    │
+ 25 │     public struct Grant has key, store {
+    │                   ----- To satisfy the constraint, the 'drop' ability would need to be added here
+
+error[E07005]: invalid transfer of references
+    ┌─ ./tests/scholarflow_tests.move:288:9
+    │
+284 │         let test = &mut scenario;
+    │                    ------------- It is still being mutably borrowed by this reference
+    ·
+288 │         setup_student_with_funds(test, &mut scenario);
+    │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Invalid usage of reference as function argument. Cannot transfer a mutable reference that is being borrowed
+
+warning[W09002]: unused variable
+    ┌─ ./tests/scholarflow_tests.move:537:55
+    │
+537 │     fun setup_student_with_funds(test: &mut Scenario, scenario: &mut Scenario) {
+    │                                                       ^^^^^^^^ Unused parameter 'scenario'. Consider removing or prefixing with an underscore: '_scenario'
+    │
+    = This warning can be suppressed with '#[allow(unused_variable)]' applied to the 'module' or module member ('const', 'fun', or 'struct')
+
+warning[W09014]: unused mutable reference '&mut' parameter
+    ┌─ ./tests/scholarflow_tests.move:537:65
+    │
+537 │     fun setup_student_with_funds(test: &mut Scenario, scenario: &mut Scenario) {
+    │                                                       --------  ^^^^^^^^^^^^^ Mutable reference is never used mutably, consider switching to an immutable reference '&' instead
+    │                                                       │          
+    │                                                       For parameters, this can be silenced by prefixing the name with an underscore, e.g. '_scenario'
+    │
+    = This warning can be suppressed with '#[allow(unused_mut_parameter)]' applied to the 'module' or module member ('const', 'fun', or 'struct')
+
+error[E06001]: unused value without 'drop'
+    ┌─ ./tests/scholarflow_tests.move:604:47
+    │
+574 │         let grant = test_scenario::take_shared<Grant>(test);
+    │             -----                              ----- The type 'scholarflow::grant_system::Grant' does not have the ability 'drop'
+    │             │                                   
+    │             The local variable 'grant' still contains a value. The value does not have the 'drop' ability and must be consumed before the function returns
+    ·
+604 │         test_scenario::return_shared(registry);
+    │                                               ^ Invalid return
+    │
+    ┌─ ./sources/scholarflow.move:25:19
+    │
+ 25 │     public struct Grant has key, store {
+    │                   ----- To satisfy the constraint, the 'drop' ability would need to be added here
