@@ -1,24 +1,27 @@
-import { useState } from 'react';
-import { Button } from '@radix-ui/themes';
-import { DEMOGRAPHICS, EDUCATION_LEVELS } from '../constants';
-import { useScholarFlow } from '../hooks/useScholarFlow';
-import type { UserRole } from '../types';
+import { useState } from "react";
+import { Button } from "@radix-ui/themes";
+import { DEMOGRAPHICS, EDUCATION_LEVELS } from "../src/constants";
+import { useScholarFlow } from "../hooks/useScholarFlow";
+import type { UserRole } from "../src/types";
 
 interface ProfileCreationFlowProps {
   userRole: UserRole;
   onProfileCreated: () => void;
 }
 
-export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreationFlowProps) {
+export function ProfileCreationFlow({
+  userRole,
+  onProfileCreated,
+}: ProfileCreationFlowProps) {
   const { registerStudent, loading, error } = useScholarFlow();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: '',
-    age: '',
-    demographic: '',
-    education_level: '',
-    bio: '',
-    goals: ''
+    name: "",
+    age: "",
+    demographic: "",
+    education_level: "",
+    bio: "",
+    goals: "",
   });
 
   const totalSteps = userRole === "student" ? 3 : 1; // Different flows for different roles
@@ -36,8 +39,13 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
   };
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.age || !formData.demographic || !formData.education_level) {
-      alert('Please fill in all required fields');
+    if (
+      !formData.name ||
+      !formData.age ||
+      !formData.demographic ||
+      !formData.education_level
+    ) {
+      alert("Please fill in all required fields");
       return;
     }
 
@@ -46,16 +54,16 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
         formData.name,
         parseInt(formData.age),
         formData.demographic,
-        formData.education_level
+        formData.education_level,
       );
       onProfileCreated();
     } catch (err) {
-      console.error('Profile creation failed:', err);
+      console.error("Profile creation failed:", err);
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const isStepValid = () => {
@@ -77,7 +85,9 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-white mb-2">Personal Information</h2>
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Personal Information
+              </h2>
               <p className="text-gray-400">Let's start with the basics</p>
             </div>
 
@@ -89,7 +99,7 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
                 <input
                   type="text"
                   value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
                   className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   placeholder="Enter your full name"
                   required
@@ -103,7 +113,7 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
                 <input
                   type="number"
                   value={formData.age}
-                  onChange={(e) => handleInputChange('age', e.target.value)}
+                  onChange={(e) => handleInputChange("age", e.target.value)}
                   className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   placeholder="Enter your age"
                   min="16"
@@ -119,8 +129,12 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-white mb-2">Background Information</h2>
-              <p className="text-gray-400">Help us understand your educational background</p>
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Background Information
+              </h2>
+              <p className="text-gray-400">
+                Help us understand your educational background
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -130,14 +144,17 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
                 </label>
                 <select
                   value={formData.demographic}
-                  onChange={(e) => handleInputChange('demographic', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("demographic", e.target.value)
+                  }
                   className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 >
                   <option value="">Select your demographic</option>
-                  {DEMOGRAPHICS.map(demo => (
+                  {DEMOGRAPHICS.map((demo) => (
                     <option key={demo} value={demo}>
-                      {demo.charAt(0).toUpperCase() + demo.slice(1).replace('-', ' ')}
+                      {demo.charAt(0).toUpperCase() +
+                        demo.slice(1).replace("-", " ")}
                     </option>
                   ))}
                 </select>
@@ -149,14 +166,17 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
                 </label>
                 <select
                   value={formData.education_level}
-                  onChange={(e) => handleInputChange('education_level', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("education_level", e.target.value)
+                  }
                   className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 >
                   <option value="">Select your education level</option>
-                  {EDUCATION_LEVELS.map(level => (
+                  {EDUCATION_LEVELS.map((level) => (
                     <option key={level} value={level}>
-                      {level.charAt(0).toUpperCase() + level.slice(1).replace('-', ' ')}
+                      {level.charAt(0).toUpperCase() +
+                        level.slice(1).replace("-", " ")}
                     </option>
                   ))}
                 </select>
@@ -169,8 +189,12 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-white mb-2">Tell Us About Yourself</h2>
-              <p className="text-gray-400">Optional information to help with grant matching</p>
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Tell Us About Yourself
+              </h2>
+              <p className="text-gray-400">
+                Optional information to help with grant matching
+              </p>
             </div>
 
             <div className="space-y-4">
@@ -180,7 +204,7 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
                 </label>
                 <textarea
                   value={formData.bio}
-                  onChange={(e) => handleInputChange('bio', e.target.value)}
+                  onChange={(e) => handleInputChange("bio", e.target.value)}
                   className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   rows={4}
                   placeholder="Tell us a bit about yourself and your background..."
@@ -193,7 +217,7 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
                 </label>
                 <textarea
                   value={formData.goals}
-                  onChange={(e) => handleInputChange('goals', e.target.value)}
+                  onChange={(e) => handleInputChange("goals", e.target.value)}
                   className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   rows={4}
                   placeholder="What are your educational and career goals?"
@@ -214,11 +238,15 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Step {currentStep} of {totalSteps}</span>
-            <span className="text-sm text-gray-400">{Math.round((currentStep / totalSteps) * 100)}%</span>
+            <span className="text-sm text-gray-400">
+              Step {currentStep} of {totalSteps}
+            </span>
+            <span className="text-sm text-gray-400">
+              {Math.round((currentStep / totalSteps) * 100)}%
+            </span>
           </div>
           <div className="w-full bg-gray-700 rounded-full h-2">
-            <div 
+            <div
               className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / totalSteps) * 100}%` }}
             ></div>
@@ -246,7 +274,7 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
                 Back
               </Button>
             )}
-            
+
             {currentStep < totalSteps ? (
               <Button
                 onClick={handleNext}
@@ -261,7 +289,7 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
                 disabled={loading}
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
               >
-                {loading ? 'Creating Profile...' : 'Complete Profile'}
+                {loading ? "Creating Profile..." : "Complete Profile"}
               </Button>
             )}
           </div>
@@ -270,11 +298,11 @@ export function ProfileCreationFlow({ userRole, onProfileCreated }: ProfileCreat
         {/* Footer */}
         <div className="text-center mt-6">
           <p className="text-gray-500 text-xs">
-            Your information is secure and will only be used for grant eligibility verification
+            Your information is secure and will only be used for grant
+            eligibility verification
           </p>
         </div>
       </div>
     </div>
   );
 }
-

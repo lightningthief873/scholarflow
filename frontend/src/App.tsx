@@ -1,13 +1,13 @@
 import { ConnectButton, useCurrentAccount } from "@iota/dapp-kit";
 import { Flex, Heading } from "@radix-ui/themes";
 import { useState, useEffect } from "react";
-import { useScholarFlow } from "./hooks/useScholarFlow";
-import { WalletSignIn } from "./components/WalletSignIn";
-import { ProfileCreationFlow } from "./components/ProfileCreationFlow";
-import { StudentRegistration } from "./components/StudentRegistration";
-import { GrantApplicationForm } from "./components/GrantApplicationForm";
-import { GrantCreationForm } from "./components/GrantCreationForm";
-import { ApplicationManagement } from "./components/ApplicationManagement";
+import { useScholarFlow } from "../hooks/useScholarFlow";
+import { WalletSignIn } from "../components/WalletSignIn";
+import { ProfileCreationFlow } from "../components/ProfileCreationFlow";
+import { StudentRegistration } from "../components/StudentRegistration";
+import { GrantApplicationForm } from "../components/GrantApplicationForm";
+import { GrantCreationForm } from "../components/GrantCreationForm";
+import { ApplicationManagement } from "../components/ApplicationManagement";
 import type { Grant, UserRole } from "./types";
 
 function App() {

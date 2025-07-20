@@ -1,32 +1,41 @@
-import React, { useState } from 'react';
-import { Button } from '@radix-ui/themes';
-import { DEMOGRAPHICS, EDUCATION_LEVELS } from '../constants';
-import { useScholarFlow } from '../hooks/useScholarFlow';
+import React, { useState } from "react";
+import { Button } from "@radix-ui/themes";
+import { DEMOGRAPHICS, EDUCATION_LEVELS } from "../src/constants";
+import { useScholarFlow } from "../hooks/useScholarFlow";
 
 interface GrantCreationFormProps {
   onGrantCreated: () => void;
   onCancel: () => void;
 }
 
-export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFormProps) {
+export function GrantCreationForm({
+  onGrantCreated,
+  onCancel,
+}: GrantCreationFormProps) {
   const { createGrant, loading, error } = useScholarFlow();
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    totalFunding: '',
-    targetDemographic: '',
-    targetEducationLevel: '',
-    maxGrantPerStudent: '',
-    applicationDeadline: ''
+    title: "",
+    description: "",
+    totalFunding: "",
+    targetDemographic: "",
+    targetEducationLevel: "",
+    maxGrantPerStudent: "",
+    applicationDeadline: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.title || !formData.description || !formData.totalFunding || 
-        !formData.targetDemographic || !formData.targetEducationLevel || 
-        !formData.maxGrantPerStudent || !formData.applicationDeadline) {
-      alert('Please fill in all fields');
+
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.totalFunding ||
+      !formData.targetDemographic ||
+      !formData.targetEducationLevel ||
+      !formData.maxGrantPerStudent ||
+      !formData.applicationDeadline
+    ) {
+      alert("Please fill in all fields");
       return;
     }
 
@@ -35,17 +44,17 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
     const deadline = new Date(formData.applicationDeadline).getTime();
 
     if (totalFunding <= 0 || maxPerStudent <= 0) {
-      alert('Funding amounts must be greater than 0');
+      alert("Funding amounts must be greater than 0");
       return;
     }
 
     if (maxPerStudent > totalFunding) {
-      alert('Max grant per student cannot exceed total funding');
+      alert("Max grant per student cannot exceed total funding");
       return;
     }
 
     if (deadline <= Date.now()) {
-      alert('Application deadline must be in the future');
+      alert("Application deadline must be in the future");
       return;
     }
 
@@ -57,27 +66,27 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
         formData.targetDemographic,
         formData.targetEducationLevel,
         maxPerStudent,
-        deadline
+        deadline,
       );
       onGrantCreated();
     } catch (err) {
-      console.error('Grant creation failed:', err);
+      console.error("Grant creation failed:", err);
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // Calculate minimum date (tomorrow)
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split('T')[0];
+  const minDate = tomorrow.toISOString().split("T")[0];
 
   return (
     <div className="max-w-2xl mx-auto bg-gray-800 p-6 rounded-lg border border-gray-700">
       <h2 className="text-2xl font-bold text-white mb-6">Create New Grant</h2>
-      
+
       {error && (
         <div className="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded mb-4">
           {error}
@@ -92,7 +101,7 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
           <input
             type="text"
             value={formData.title}
-            onChange={(e) => handleInputChange('title', e.target.value)}
+            onChange={(e) => handleInputChange("title", e.target.value)}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., STEM Education Grant"
             required
@@ -105,7 +114,7 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
           </label>
           <textarea
             value={formData.description}
-            onChange={(e) => handleInputChange('description', e.target.value)}
+            onChange={(e) => handleInputChange("description", e.target.value)}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={4}
             placeholder="Describe the purpose and goals of this grant..."
@@ -121,7 +130,9 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
             <input
               type="number"
               value={formData.totalFunding}
-              onChange={(e) => handleInputChange('totalFunding', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("totalFunding", e.target.value)
+              }
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="50000"
               min="1"
@@ -137,7 +148,9 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
             <input
               type="number"
               value={formData.maxGrantPerStudent}
-              onChange={(e) => handleInputChange('maxGrantPerStudent', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("maxGrantPerStudent", e.target.value)
+              }
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="2500"
               min="1"
@@ -154,14 +167,17 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
             </label>
             <select
               value={formData.targetDemographic}
-              onChange={(e) => handleInputChange('targetDemographic', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("targetDemographic", e.target.value)
+              }
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             >
               <option value="">Select demographic</option>
-              {DEMOGRAPHICS.map(demo => (
+              {DEMOGRAPHICS.map((demo) => (
                 <option key={demo} value={demo}>
-                  {demo.charAt(0).toUpperCase() + demo.slice(1).replace('-', ' ')}
+                  {demo.charAt(0).toUpperCase() +
+                    demo.slice(1).replace("-", " ")}
                 </option>
               ))}
             </select>
@@ -173,14 +189,17 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
             </label>
             <select
               value={formData.targetEducationLevel}
-              onChange={(e) => handleInputChange('targetEducationLevel', e.target.value)}
+              onChange={(e) =>
+                handleInputChange("targetEducationLevel", e.target.value)
+              }
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             >
               <option value="">Select education level</option>
-              {EDUCATION_LEVELS.map(level => (
+              {EDUCATION_LEVELS.map((level) => (
                 <option key={level} value={level}>
-                  {level.charAt(0).toUpperCase() + level.slice(1).replace('-', ' ')}
+                  {level.charAt(0).toUpperCase() +
+                    level.slice(1).replace("-", " ")}
                 </option>
               ))}
             </select>
@@ -194,7 +213,9 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
           <input
             type="date"
             value={formData.applicationDeadline}
-            onChange={(e) => handleInputChange('applicationDeadline', e.target.value)}
+            onChange={(e) =>
+              handleInputChange("applicationDeadline", e.target.value)
+            }
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             min={minDate}
             required
@@ -218,7 +239,7 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
             disabled={loading}
             className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
           >
-            {loading ? 'Creating Grant...' : 'Create Grant'}
+            {loading ? "Creating Grant..." : "Create Grant"}
           </Button>
           <Button
             type="button"
@@ -233,4 +254,3 @@ export function GrantCreationForm({ onGrantCreated, onCancel }: GrantCreationFor
     </div>
   );
 }
-

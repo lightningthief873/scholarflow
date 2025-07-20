@@ -1,18 +1,32 @@
-import { useState, useEffect } from 'react';
-import { useCurrentAccount, useSignAndExecuteTransaction } from '@iota/dapp-kit';
-import { Transaction } from '@iota/iota-sdk/transactions';
-import { PACKAGE_ID, MOCK_DATA } from '../constants';
-import type { Grant, GrantApplication, StudentProfile, StudentWallet, EducationalStore, SystemRegistry } from '../types';
+import { useState, useEffect } from "react";
+import {
+  useCurrentAccount,
+  useSignAndExecuteTransaction,
+} from "@iota/dapp-kit";
+import { Transaction } from "@iota/iota-sdk/transactions";
+import { PACKAGE_ID, MOCK_DATA } from "../src/constants";
+import type {
+  Grant,
+  GrantApplication,
+  StudentProfile,
+  StudentWallet,
+  EducationalStore,
+  SystemRegistry,
+} from "../src/types";
 
 export function useScholarFlow() {
   const currentAccount = useCurrentAccount();
   const { mutate: signAndExecute } = useSignAndExecuteTransaction();
-  
+
   // State management
   const [grants, setGrants] = useState<Grant[]>(MOCK_DATA.GRANTS);
   const [applications, setApplications] = useState<GrantApplication[]>([]);
-  const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(null);
-  const [studentWallet, setStudentWallet] = useState<StudentWallet | null>(null);
+  const [studentProfile, setStudentProfile] = useState<StudentProfile | null>(
+    null,
+  );
+  const [studentWallet, setStudentWallet] = useState<StudentWallet | null>(
+    null,
+  );
   const [stores] = useState<EducationalStore[]>(MOCK_DATA.STORES);
   const [systemStats] = useState<SystemRegistry>(MOCK_DATA.SYSTEM_STATS);
   const [loading, setLoading] = useState(false);
@@ -32,7 +46,7 @@ export function useScholarFlow() {
     try {
       // In a real implementation, these would be blockchain calls
       // For now, using mock data
-      
+
       // Check if student profile exists
       const mockProfile: StudentProfile = {
         id: "profile_" + address,
@@ -43,7 +57,7 @@ export function useScholarFlow() {
         education_level: "undergraduate",
         documents_verified: true,
         verification_timestamp: Date.now(),
-        total_grants_received: 2
+        total_grants_received: 2,
       };
       setStudentProfile(mockProfile);
 
@@ -59,9 +73,9 @@ export function useScholarFlow() {
             merchant_address: "0x789...",
             merchant_type: "educational",
             item_description: "Programming Textbook",
-            timestamp: Date.now() - 7 * 24 * 60 * 60 * 1000
-          }
-        ]
+            timestamp: Date.now() - 7 * 24 * 60 * 60 * 1000,
+          },
+        ],
       };
       setStudentWallet(mockWallet);
 
@@ -71,16 +85,16 @@ export function useScholarFlow() {
           id: "app_1",
           grant_id: "1",
           student_address: address,
-          application_text: "I am applying for this grant to support my STEM education...",
+          application_text:
+            "I am applying for this grant to support my STEM education...",
           requested_amount: 2000,
           application_timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000,
-          status: "pending"
-        }
+          status: "pending",
+        },
       ];
       setApplications(mockApplications);
-
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load user data');
+      setError(err instanceof Error ? err.message : "Failed to load user data");
     } finally {
       setLoading(false);
     }
@@ -97,14 +111,14 @@ export function useScholarFlow() {
     name: string,
     age: number,
     demographic: string,
-    education_level: string
+    education_level: string,
   ) => {
-    if (!currentAccount) throw new Error('Wallet not connected');
-    
+    if (!currentAccount) throw new Error("Wallet not connected");
+
     setLoading(true);
     try {
       const tx = new Transaction();
-      
+
       // In a real implementation, this would call the smart contract
       tx.moveCall({
         target: `${PACKAGE_ID}::grant_system::register_student`,
@@ -113,8 +127,8 @@ export function useScholarFlow() {
           tx.pure.string(name),
           tx.pure.u64(age),
           tx.pure.string(demographic),
-          tx.pure.string(education_level)
-        ]
+          tx.pure.string(education_level),
+        ],
       });
 
       await new Promise((resolve) => {
@@ -122,19 +136,21 @@ export function useScholarFlow() {
           { transaction: tx },
           {
             onSuccess: (result) => {
-              console.log('Student registered:', result);
+              console.log("Student registered:", result);
               loadUserData(currentAccount.address);
               resolve(result);
             },
             onError: (error) => {
               setError(error.message);
               throw error;
-            }
-          }
+            },
+          },
         );
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to register student');
+      setError(
+        err instanceof Error ? err.message : "Failed to register student",
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -144,22 +160,22 @@ export function useScholarFlow() {
   const submitGrantApplication = async (
     grantId: string,
     applicationText: string,
-    requestedAmount: number
+    requestedAmount: number,
   ) => {
-    if (!currentAccount) throw new Error('Wallet not connected');
-    
+    if (!currentAccount) throw new Error("Wallet not connected");
+
     setLoading(true);
     try {
       const tx = new Transaction();
-      
+
       tx.moveCall({
         target: `${PACKAGE_ID}::grant_system::submit_grant_application`,
         arguments: [
-          tx.object(studentProfile?.id || ''),
+          tx.object(studentProfile?.id || ""),
           tx.object(grantId),
           tx.pure.string(applicationText),
-          tx.pure.u64(requestedAmount)
-        ]
+          tx.pure.u64(requestedAmount),
+        ],
       });
 
       await new Promise((resolve) => {
@@ -167,8 +183,8 @@ export function useScholarFlow() {
           { transaction: tx },
           {
             onSuccess: (result) => {
-              console.log('Application submitted:', result);
-              
+              console.log("Application submitted:", result);
+
               // Add to local state
               const newApplication: GrantApplication = {
                 id: "app_" + Date.now(),
@@ -177,20 +193,22 @@ export function useScholarFlow() {
                 application_text: applicationText,
                 requested_amount: requestedAmount,
                 application_timestamp: Date.now(),
-                status: "pending"
+                status: "pending",
               };
-              setApplications(prev => [...prev, newApplication]);
+              setApplications((prev) => [...prev, newApplication]);
               resolve(result);
             },
             onError: (error) => {
               setError(error.message);
               throw error;
-            }
-          }
+            },
+          },
         );
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit application');
+      setError(
+        err instanceof Error ? err.message : "Failed to submit application",
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -200,21 +218,22 @@ export function useScholarFlow() {
   const purchaseItem = async (
     storeId: string,
     itemId: number,
-    amount: number
+    amount: number,
   ) => {
-    if (!currentAccount || !studentWallet) throw new Error('Wallet not connected or no wallet found');
-    
+    if (!currentAccount || !studentWallet)
+      throw new Error("Wallet not connected or no wallet found");
+
     setLoading(true);
     try {
       const tx = new Transaction();
-      
+
       tx.moveCall({
         target: `${PACKAGE_ID}::grant_system::purchase_item_educational`,
         arguments: [
           tx.object(studentWallet.id),
           tx.object(storeId),
-          tx.pure.u64(itemId)
-        ]
+          tx.pure.u64(itemId),
+        ],
       });
 
       await new Promise((resolve) => {
@@ -222,34 +241,38 @@ export function useScholarFlow() {
           { transaction: tx },
           {
             onSuccess: (result) => {
-              console.log('Item purchased:', result);
-              
+              console.log("Item purchased:", result);
+
               // Update wallet balance
-              setStudentWallet(prev => prev ? {
-                ...prev,
-                available_balance: prev.available_balance - amount,
-                spending_history: [
-                  ...prev.spending_history,
-                  {
-                    amount,
-                    merchant_address: storeId,
-                    merchant_type: "educational",
-                    item_description: `Item ${itemId}`,
-                    timestamp: Date.now()
-                  }
-                ]
-              } : null);
+              setStudentWallet((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      available_balance: prev.available_balance - amount,
+                      spending_history: [
+                        ...prev.spending_history,
+                        {
+                          amount,
+                          merchant_address: storeId,
+                          merchant_type: "educational",
+                          item_description: `Item ${itemId}`,
+                          timestamp: Date.now(),
+                        },
+                      ],
+                    }
+                  : null,
+              );
               resolve(result);
             },
             onError: (error) => {
               setError(error.message);
               throw error;
-            }
-          }
+            },
+          },
         );
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to purchase item');
+      setError(err instanceof Error ? err.message : "Failed to purchase item");
       throw err;
     } finally {
       setLoading(false);
@@ -264,26 +287,26 @@ export function useScholarFlow() {
     targetDemographic: string,
     targetEducationLevel: string,
     maxGrantPerStudent: number,
-    applicationDeadline: number
+    applicationDeadline: number,
   ) => {
-    if (!currentAccount) throw new Error('Wallet not connected');
-    
+    if (!currentAccount) throw new Error("Wallet not connected");
+
     setLoading(true);
     try {
       const tx = new Transaction();
-      
+
       tx.moveCall({
         target: `${PACKAGE_ID}::grant_system::create_grant`,
         arguments: [
-          tx.object('admin_cap_id'), // Admin capability object
+          tx.object("admin_cap_id"), // Admin capability object
           tx.pure.string(title),
           tx.pure.string(description),
           tx.pure.u64(totalFunding),
           tx.pure.string(targetDemographic),
           tx.pure.string(targetEducationLevel),
           tx.pure.u64(maxGrantPerStudent),
-          tx.pure.u64(applicationDeadline)
-        ]
+          tx.pure.u64(applicationDeadline),
+        ],
       });
 
       await new Promise((resolve) => {
@@ -291,8 +314,8 @@ export function useScholarFlow() {
           { transaction: tx },
           {
             onSuccess: (result) => {
-              console.log('Grant created:', result);
-              
+              console.log("Grant created:", result);
+
               // Add to local state
               const newGrant: Grant = {
                 id: "grant_" + Date.now(),
@@ -306,20 +329,20 @@ export function useScholarFlow() {
                 max_grant_per_student: maxGrantPerStudent,
                 application_deadline: applicationDeadline,
                 is_active: true,
-                approved_students: []
+                approved_students: [],
               };
-              setGrants(prev => [...prev, newGrant]);
+              setGrants((prev) => [...prev, newGrant]);
               resolve(result);
             },
             onError: (error) => {
               setError(error.message);
               throw error;
-            }
-          }
+            },
+          },
         );
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create grant');
+      setError(err instanceof Error ? err.message : "Failed to create grant");
       throw err;
     } finally {
       setLoading(false);
@@ -327,19 +350,19 @@ export function useScholarFlow() {
   };
 
   const approveApplication = async (applicationId: string) => {
-    if (!currentAccount) throw new Error('Wallet not connected');
-    
+    if (!currentAccount) throw new Error("Wallet not connected");
+
     setLoading(true);
     try {
       const tx = new Transaction();
-      
+
       tx.moveCall({
         target: `${PACKAGE_ID}::grant_system::approve_grant_application`,
         arguments: [
-          tx.object('admin_cap_id'),
-          tx.object('grant_id'),
-          tx.object(applicationId)
-        ]
+          tx.object("admin_cap_id"),
+          tx.object("grant_id"),
+          tx.object(applicationId),
+        ],
       });
 
       await new Promise((resolve) => {
@@ -347,27 +370,29 @@ export function useScholarFlow() {
           { transaction: tx },
           {
             onSuccess: (result) => {
-              console.log('Application approved:', result);
-              
+              console.log("Application approved:", result);
+
               // Update application status
-              setApplications(prev => 
-                prev.map(app => 
-                  app.id === applicationId 
+              setApplications((prev) =>
+                prev.map((app) =>
+                  app.id === applicationId
                     ? { ...app, status: "approved" as const }
-                    : app
-                )
+                    : app,
+                ),
               );
               resolve(result);
             },
             onError: (error) => {
               setError(error.message);
               throw error;
-            }
-          }
+            },
+          },
         );
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to approve application');
+      setError(
+        err instanceof Error ? err.message : "Failed to approve application",
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -386,18 +411,17 @@ export function useScholarFlow() {
     error,
     isConnected: !!currentAccount,
     currentAddress: currentAccount?.address,
-    
+
     // Student functions
     registerStudent,
     submitGrantApplication,
     purchaseItem,
-    
+
     // Admin functions
     createGrant,
     approveApplication,
-    
+
     // Utility
-    clearError: () => setError(null)
+    clearError: () => setError(null),
   };
 }
-
